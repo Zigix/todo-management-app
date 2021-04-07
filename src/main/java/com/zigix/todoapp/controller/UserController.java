@@ -1,14 +1,15 @@
 package com.zigix.todoapp.controller;
 
-import com.zigix.todoapp.model.ChangePasswordRequest;
-import com.zigix.todoapp.model.projection.UserReadModel;
+import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.service.UserService;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/users/profile")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -17,14 +18,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public UserReadModel showUserProfileInfo(Principal principal) {
-        return userService.getUserByUsername(principal.getName());
-    }
-
-    @PatchMapping
-    public boolean changeUserPassword(@RequestBody ChangePasswordRequest request,
-                                      Principal principal) {
-        return userService.changeUserPassword(request, principal.getName());
+    @GetMapping("/profile")
+    public ResponseEntity<User> showUserProfileInfo(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(user);
     }
 }

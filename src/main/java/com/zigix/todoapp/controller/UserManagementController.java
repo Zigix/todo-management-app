@@ -1,8 +1,8 @@
 package com.zigix.todoapp.controller;
 
-import com.zigix.todoapp.model.projection.UserReadModel;
-import com.zigix.todoapp.model.projection.UserWriteModel;
+import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.service.UserService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,24 +19,35 @@ public class UserManagementController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public List<UserReadModel> getAllUsers() {
+    @GetMapping(params = {"!sort", "!size"})
+    public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
+    @GetMapping
+    public List<User> getAllUsers(Pageable pageable) {
+        return userService.getAllUsers(pageable);
+    }
+
     @GetMapping("/{id}")
-    public UserReadModel getUser(@PathVariable("id") Long userId) {
+    public User getUser(@PathVariable("id") Long userId) {
         return userService.getUserById(userId);
     }
 
     @PostMapping
-    public UserReadModel addNewUser(@RequestBody UserWriteModel userWriteModel) {
-        return userService.addUser(userWriteModel);
+    public User addNewUser(@RequestBody User user) {
+        user.setUserId(0L);
+        return userService.addUser(user);
     }
 
     @PutMapping("/{id}")
-    public UserReadModel updateUser(@PathVariable("id") Long userId,
-                                    @RequestBody UserWriteModel userWriteModel) {
-        return userService.updateUser(userId, userWriteModel);
+    public User updateUser(@PathVariable("id") Long userId, @RequestBody User user) {
+        user.setUserId(userId);
+        return userService.updateUser(user);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") Long userId) {
+        userService.deleteUserById(userId);
     }
 }

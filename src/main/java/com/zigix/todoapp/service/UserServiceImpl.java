@@ -1,13 +1,10 @@
 package com.zigix.todoapp.service;
 
 import com.zigix.todoapp.exception.UserNotFoundException;
-import com.zigix.todoapp.model.ChangePasswordRequest;
 import com.zigix.todoapp.model.User;
-import com.zigix.todoapp.model.UserMapper;
 import com.zigix.todoapp.model.UserRole;
-import com.zigix.todoapp.model.projection.UserReadModel;
-import com.zigix.todoapp.model.projection.UserWriteModel;
 import com.zigix.todoapp.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,21 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
     public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder,
-                           UserMapper userMapper) {
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
     }
 
     @PostConstruct
@@ -53,61 +46,47 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findByUsername(username)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User with " + username + " username does not exist"));
+                        new UsernameNotFoundException("User with " + username + " username not found"));
     }
 
     @Override
-    public UserReadModel getUserByUsername(String username) {
-        User user = (User) loadUserByUsername(username);
-        return userMapper.toUserReadModel(user);
+    public User getUserByUsername(String username) {
+        return (User) loadUserByUsername(username);
     }
 
     @Override
-    public List<UserReadModel> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(userMapper::toUserReadModel)
-                .collect(Collectors.toList());
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override
-    public UserReadModel addUser(UserWriteModel userWriteModel) {
-        User user = userMapper.toUser(userWriteModel);
+    public List<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).getContent();
+    }
+
+    @Override
+    public User addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(List.of(UserRole.EMPLOYEE));
-        return userMapper.toUserReadModel(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     @Override
-    public UserReadModel getUserById(Long userId) {
-        User user =  userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with id " + userId + " not found"));
-        return userMapper.toUserReadModel(user);
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow();
     }
 
     @Override
-    public UserReadModel updateUser(Long userId, UserWriteModel userWriteModel) {
-        if(userRepository.findById(userId).isEmpty()) {
-            throw new UserNotFoundException("User with id " + userId + " not found");
+    public User updateUser(User user) {
+        if(userRepository.findById(user.getUserId()).isEmpty()) {
+            throw new UserNotFoundException("User with id " + user.getUserId() + " not found");
         }
-
-        User user = userMapper.toUser(userWriteModel);
-        user.setUserId(userId);
-
-        return userMapper.toUserReadModel(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public boolean changeUserPassword(ChangePasswordRequest request, String username) {
-        User user = (User) loadUserByUsername(username);
-        if(!passwordEncoder.encode(request.getCurrentPassword()).equals(user.getPassword())) {
-            return false;
-        }
-        if(!request.getNewPassword().equals(request.getMatchingNewPassword())) {
-            return false;
-        }
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-
-        return true;
+    public void deleteUserById(Long userId) {
+        userRepository.deleteByUserId(userId);
     }
 }

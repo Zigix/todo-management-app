@@ -1,25 +1,24 @@
 package com.zigix.todoapp.service;
 
-import com.zigix.todoapp.model.ChangePasswordRequest;
 import com.zigix.todoapp.model.User;
-import com.zigix.todoapp.model.projection.UserReadModel;
-import com.zigix.todoapp.model.projection.UserWriteModel;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.security.Principal;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    List<UserReadModel> getAllUsers();
+    List<User> getAllUsers();
 
-    UserReadModel getUserById(Long userId);
+    List<User> getAllUsers(Pageable pageable);
 
-    UserReadModel getUserByUsername(String username);
+    User getUserById(Long userId);
 
-    UserReadModel addUser(UserWriteModel userWriteModel);
+    User getUserByUsername(String username);
 
-    UserReadModel updateUser(Long userId, UserWriteModel userWriteModel);
+    User addUser(User user);
 
-    boolean changeUserPassword(ChangePasswordRequest request, String username);
+    User updateUser(User user);
+
+    void deleteUserById(Long userId);
 }
