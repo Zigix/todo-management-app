@@ -6,6 +6,7 @@ import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.repository.TaskGroupRepository;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Tuple;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +31,6 @@ public class TaskGroupServiceImpl implements TaskGroupService {
     public List<TaskGroup> getTaskGroups(Long userId, String creatorName) {
         return taskGroupRepository.findAllByUserUserIdAndAndCreatedBy(userId, creatorName);
     }
-
     @Override
     public TaskGroup getSingleTaskGroup(Long groupId, Long userId) {
         TaskGroup taskGroup = taskGroupRepository.findById(groupId)
@@ -68,6 +68,7 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 
         taskGroup.getTasks().forEach(task -> {
             task.setUser(user);
+            task.setTaskGroup(taskGroup);
         });
 
         return taskGroupRepository.save(taskGroup);

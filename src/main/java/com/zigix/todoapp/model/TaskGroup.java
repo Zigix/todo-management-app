@@ -1,9 +1,6 @@
 package com.zigix.todoapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.zigix.todoapp.audit.Audit;
-import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,11 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Builder
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class TaskGroup extends Audit<String> implements Serializable {
 
     @Id
@@ -25,6 +17,7 @@ public class TaskGroup extends Audit<String> implements Serializable {
     private Long groupId;
     private String description;
     private LocalDateTime deadline;
+    private boolean done = false;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taskGroup")
     private Set<Task> tasks = new HashSet<>();
@@ -32,4 +25,54 @@ public class TaskGroup extends Audit<String> implements Serializable {
     @ManyToOne
     private User user;
 
+    public TaskGroup() {
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
 }
