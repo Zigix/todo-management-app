@@ -20,7 +20,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getTasks(Long userId) {
+    public List<Task> getTasks() {
+        Long userId = userService.getCurrentlyLoggedUser().getUserId();
         return taskRepository.findAllByUserUserId(userId);
     }
 
@@ -30,12 +31,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task getSingleTask(Long taskId, Long userId) {
+    public Task getSingleTask(Long taskId) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow();
+                .orElseThrow(); // FIXME: ...
+
+        Long userId = userService.getCurrentlyLoggedUser().getUserId();
 
         if(!task.getUser().getUserId().equals(userId)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(); // FIXME: ...
         }
 
         return task;
@@ -44,13 +47,19 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task getSingleTask(Long taskId, String taskCreatorName) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow();
+                .orElseThrow(); // FIXME: ...
 
         if(!task.getCreatedBy().equals(taskCreatorName)) {
-            throw new IllegalStateException(); // FIXME the same
+            throw new IllegalStateException(); // FIXME ...
         }
 
         return task;
+    }
+
+    @Override
+    public Task addTask(Task task) {
+        Long userId = userService.getCurrentlyLoggedUser().getUserId();
+        return addTask(task, userId);
     }
 
     @Override

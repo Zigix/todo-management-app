@@ -6,7 +6,6 @@ import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.repository.TaskGroupRepository;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Tuple;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +22,8 @@ public class TaskGroupServiceImpl implements TaskGroupService {
     }
 
     @Override
-    public List<TaskGroup> getTaskGroups(Long userId) {
+    public List<TaskGroup> getTaskGroups() {
+        Long userId = userService.getCurrentlyLoggedUser().getUserId();
         return taskGroupRepository.findAllByUserUserId(userId);
     }
 
@@ -32,12 +32,14 @@ public class TaskGroupServiceImpl implements TaskGroupService {
         return taskGroupRepository.findAllByUserUserIdAndAndCreatedBy(userId, creatorName);
     }
     @Override
-    public TaskGroup getSingleTaskGroup(Long groupId, Long userId) {
+    public TaskGroup getSingleTaskGroup(Long groupId) {
         TaskGroup taskGroup = taskGroupRepository.findById(groupId)
                 .orElseThrow(); // FIXME: ...
 
+        Long userId = userService.getCurrentlyLoggedUser().getUserId();
+
         if(!taskGroup.getUser().getUserId().equals(userId)) {
-            throw new IllegalStateException("u hv not access");
+            throw new IllegalStateException("u hv not access"); // FIXME: ...
         }
 
         return taskGroup;
@@ -53,6 +55,12 @@ public class TaskGroupServiceImpl implements TaskGroupService {
         }
 
         return taskGroup;
+    }
+
+    @Override
+    public TaskGroup addTaskGroup(TaskGroup taskGroup) {
+        Long userId = userService.getCurrentlyLoggedUser().getUserId();
+        return addTaskGroup(taskGroup, userId);
     }
 
     @Override

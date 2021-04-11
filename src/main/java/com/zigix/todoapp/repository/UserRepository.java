@@ -20,4 +20,8 @@ public interface UserRepository {
     User save(User user);
 
     void deleteByUserId(Long userId);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }

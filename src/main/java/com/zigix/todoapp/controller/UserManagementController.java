@@ -1,12 +1,18 @@
 package com.zigix.todoapp.controller;
 
 import com.zigix.todoapp.model.User;
+import com.zigix.todoapp.service.UserRegistrationService;
 import com.zigix.todoapp.service.UserService;
+import com.zigix.todoapp.service.projection.UserReadModel;
+import com.zigix.todoapp.service.projection.UserRegistrationRequest;
+import com.zigix.todoapp.service.projection.UserUpdateRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/management/users")
@@ -14,36 +20,45 @@ import java.util.List;
 public class UserManagementController {
 
     private final UserService userService;
+    private final UserRegistrationService userRegistrationService;
 
-    public UserManagementController(UserService userService) {
+    public UserManagementController(UserService userService,
+                                    UserRegistrationService userRegistrationService) {
         this.userService = userService;
+        this.userRegistrationService = userRegistrationService;
     }
 
     @GetMapping(params = {"!sort", "!size"})
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserReadModel> getAllUsers() {
+        return userService.getAllUsers().stream()
+                .map(UserReadModel::new)
+                .collect(Collectors.toList());
     }
 
     @GetMapping
-    public List<User> getAllUsers(Pageable pageable) {
-        return userService.getAllUsers(pageable);
+    public List<UserReadModel> getAllUsers(Pageable pageable) {
+        return userService.getAllUsers(pageable).stream()
+                .map(UserReadModel::new)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id") Long userId) {
-        return userService.getUserById(userId);
+    public UserReadModel getUser(@PathVariable("id") Long userId) {
+        User user = userService.getUserById(userId);
+        return new UserReadModel(user);
     }
 
     @PostMapping
-    public User addNewUser(@RequestBody User user) {
-        user.setUserId(0L);
-        return userService.addUser(user);
+    public UserReadModel registerNewUser(@RequestBody @Valid UserRegistrationRequest registrationRequest) {
+        User user =  userRegistrationService.registerUser(registrationRequest);
+        return new UserReadModel(user);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable("id") Long userId, @RequestBody User user) {
-        user.setUserId(userId);
-        return userService.updateUser(user);
+    public UserReadModel updateUser(@PathVariable("id") Long userId,
+                                    @RequestBody @Valid UserUpdateRequest updateRequest) {
+        User user = userService.updateUser(userId, updateRequest.toUser());
+        return new UserReadModel(user);
     }
 
     @DeleteMapping("/{id}")

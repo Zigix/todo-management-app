@@ -19,19 +19,17 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> readAllTasksFromLoggedUser(@AuthenticationPrincipal(expression = "userId") Long userId) {
-        return taskService.getTasks(userId);
+    public List<Task> readAllTasksFromLoggedUser() {
+        return taskService.getTasks();
     }
 
     @GetMapping("/{id}")
-    public Task readTaskFromLoggedUser(@PathVariable("id") Long taskId,
-                                       @AuthenticationPrincipal(expression = "userId") Long userId) {
-        return taskService.getSingleTask(taskId, userId);
+    public Task readTaskFromLoggedUser(@PathVariable("id") Long taskId) {
+        return taskService.getSingleTask(taskId);
     }
 
     @PostMapping
-    public Task addTask(@RequestBody Task task,
-                        @AuthenticationPrincipal(expression = "userId") Long userId) {
-        return taskService.addTask(task, userId);
+    public Task addTask(@RequestBody Task task) {
+        return taskService.addTask(task);
     }
 }

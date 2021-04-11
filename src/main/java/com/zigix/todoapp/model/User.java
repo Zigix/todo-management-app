@@ -1,7 +1,5 @@
 package com.zigix.todoapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,12 +24,12 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, unique = true)
     private Long userId;
+    private String firstName;
+    private String lastName;
     @Column(nullable = false, unique = true)
     private String username;
     private String password;
     private String email;
-    private String firstName;
-    private String lastName;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -45,7 +43,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    @JsonIgnore
     public String getPassword() {
         return password;
     }

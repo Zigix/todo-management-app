@@ -4,26 +4,34 @@ import com.zigix.todoapp.exception.UserNotFoundException;
 import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.model.UserRole;
 import com.zigix.todoapp.repository.UserRepository;
+import com.zigix.todoapp.service.projection.UserRegistrationRequest;
+import com.zigix.todoapp.service.registration.PasswordGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordGenerator passwordGenerator;
 
     public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           PasswordGenerator passwordGenerator) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.passwordGenerator = passwordGenerator;
     }
 
     @PostConstruct
@@ -42,16 +50,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository
-                .findByUsername(username)
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User with " + username + " username not found"));
+                        new UsernameNotFoundException("User " + username + " not found"));
     }
 
     @Override
-    public User getUserByUsername(String username) {
-        return (User) loadUserByUsername(username);
+    public User getCurrentlyLoggedUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @Override
@@ -66,7 +73,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -77,10 +83,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
-        if(userRepository.findById(user.getUserId()).isEmpty()) {
+    public User updateUser(Long userId, User user) {
+        if(userRepository.findById(userId).isEmpty()) {
             throw new UserNotFoundException("User with id " + user.getUserId() + " not found");
         }
+        user.setUserId(userId);
         return userRepository.save(user);
     }
 
@@ -88,5 +95,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUserById(Long userId) {
         userRepository.deleteByUserId(userId);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 }

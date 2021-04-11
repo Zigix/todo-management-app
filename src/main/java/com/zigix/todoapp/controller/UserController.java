@@ -19,7 +19,8 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<User> showUserProfileInfo(@AuthenticationPrincipal User user) {
+    public ResponseEntity<User> showUserProfileInfo() {
+        User user = userService.getCurrentlyLoggedUser();
         return ResponseEntity.ok(user);
     }
 }

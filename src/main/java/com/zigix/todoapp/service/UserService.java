@@ -1,12 +1,14 @@
 package com.zigix.todoapp.service;
 
 import com.zigix.todoapp.model.User;
+import com.zigix.todoapp.service.projection.UserRegistrationRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService extends UserDetailsService {
+public interface UserService {
+
+    User getCurrentlyLoggedUser();
 
     List<User> getAllUsers();
 
@@ -18,7 +20,11 @@ public interface UserService extends UserDetailsService {
 
     User addUser(User user);
 
-    User updateUser(User user);
+    User updateUser(Long userId, User user);
 
     void deleteUserById(Long userId);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByUsername(String username);
 }

@@ -18,19 +18,17 @@ public class TaskGroupController {
     }
 
     @GetMapping
-    public List<TaskGroup> readAllTaskGroups(@AuthenticationPrincipal(expression = "userId") Long userId) {
-        return taskGroupService.getTaskGroups(userId);
+    public List<TaskGroup> readAllTaskGroups() {
+        return taskGroupService.getTaskGroups();
     }
 
     @GetMapping("/{groupId}")
-    public TaskGroup readSingleTaskGroup(@PathVariable("groupId") Long groupId,
-                                         @AuthenticationPrincipal(expression = "userId") Long userId) {
-        return taskGroupService.getSingleTaskGroup(groupId, userId);
+    public TaskGroup readSingleTaskGroup(@PathVariable("groupId") Long groupId) {
+        return taskGroupService.getSingleTaskGroup(groupId);
     }
 
     @PostMapping
-    public TaskGroup addTaskGroup(@RequestBody TaskGroup taskGroup,
-                                  @AuthenticationPrincipal(expression = "userId") Long userId) {
-        return taskGroupService.addTaskGroup(taskGroup, userId);
+    public TaskGroup addTaskGroup(@RequestBody TaskGroup taskGroup) {
+        return taskGroupService.addTaskGroup(taskGroup);
     }
 }
