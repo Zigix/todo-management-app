@@ -2,6 +2,7 @@ package com.zigix.todoapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zigix.todoapp.audit.Audit;
+import io.micrometer.core.instrument.search.Search;
 
 import javax.persistence.*;
 import java.io.Serializable;

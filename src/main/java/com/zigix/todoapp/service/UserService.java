@@ -1,14 +1,16 @@
 package com.zigix.todoapp.service;
 
 import com.zigix.todoapp.model.User;
-import com.zigix.todoapp.service.projection.UserRegistrationRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
 public interface UserService {
 
-    User getCurrentlyLoggedUser();
+    default User getCurrentlyLoggedUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 
     List<User> getAllUsers();
 

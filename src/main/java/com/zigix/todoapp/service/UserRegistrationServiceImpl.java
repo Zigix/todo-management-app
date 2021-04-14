@@ -8,8 +8,10 @@ import com.zigix.todoapp.service.registration.PasswordGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         String firstName = registrationRequest.getFirstName();
         String lastName = registrationRequest.getLastName();
         String emailAddress = registrationRequest.getEmail();
-        String username = firstName.toLowerCase().charAt(0) + lastName.toLowerCase(); // FIXME: ...
+
+        String username = createValidUsername(firstName, lastName); // FIXME ...
         String password = passwordGenerator.generate();
 
         Map<String, String> exchangers = new HashMap<>(); // FIXME: ...
@@ -51,13 +54,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         return userService.addUser(
                 User.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .username(username)
-                .password(passwordEncoder.encode(password))
-                .email(emailAddress)
-                .roles(List.of(UserRole.EMPLOYEE))
-                .build()
+                        .firstName(firstName)
+                        .lastName(lastName)
+                        .username(username)
+                        .password(passwordEncoder.encode(password))
+                        .email(emailAddress)
+                        .roles(List.of(UserRole.EMPLOYEE))
+                        .build()
         );
     }
 
@@ -67,7 +70,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         StringBuilder mailContentBuilder;
         String mailContent;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             mailContentBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -85,5 +88,20 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         }
 
         return mailContent;
+    }
+
+    private String createValidUsername(String firstName, String lastName) {
+        String username = firstName.toLowerCase().charAt(0) + lastName.toLowerCase();
+        int counter = 2;
+        do {
+            if (userService.existsByUsername(username)) {
+                username += counter;
+                counter++;
+            } else {
+                break;
+            }
+        } while (true);
+
+        return username;
     }
 }

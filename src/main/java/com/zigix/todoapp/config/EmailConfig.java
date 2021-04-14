@@ -11,8 +11,11 @@ public class EmailConfig {
     @Bean
     public JavaMailSender javaMailSenderImpl() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("localhost");
-        mailSender.setPort(1025);
+        mailSender.setProtocol("smtp");
+        mailSender.setHost("smtp.mailtrap.io");
+        mailSender.setPort(2525);
+        mailSender.setUsername("e77ebcc798413b");
+        mailSender.setPassword("6f6c83dafe7301");
         return mailSender;
     }
 }

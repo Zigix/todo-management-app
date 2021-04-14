@@ -4,18 +4,15 @@ import com.zigix.todoapp.exception.UserNotFoundException;
 import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.model.UserRole;
 import com.zigix.todoapp.repository.UserRepository;
-import com.zigix.todoapp.service.projection.UserRegistrationRequest;
 import com.zigix.todoapp.service.registration.PasswordGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -54,11 +51,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User " + username + " not found"));
-    }
-
-    @Override
-    public User getCurrentlyLoggedUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @Override

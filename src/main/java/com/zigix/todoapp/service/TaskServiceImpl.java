@@ -1,5 +1,7 @@
 package com.zigix.todoapp.service;
 
+import com.zigix.todoapp.exception.TaskAccessException;
+import com.zigix.todoapp.exception.TaskNotFoundException;
 import com.zigix.todoapp.model.Task;
 import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.repository.TaskRepository;
@@ -21,36 +23,19 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getTasks() {
-        Long userId = userService.getCurrentlyLoggedUser().getUserId();
+        Long userId = getCurrentlyLoggedUserId();
         return taskRepository.findAllByUserUserId(userId);
-    }
-
-    @Override
-    public List<Task> getTasks(Long userId, String taskCreatorName) {
-        return taskRepository.findAllByUserUserIdAndCreatedBy(userId, taskCreatorName);
     }
 
     @Override
     public Task getSingleTask(Long taskId) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(); // FIXME: ...
+                .orElseThrow(() -> new TaskNotFoundException("Task with id " + taskId + " not found"));
 
-        Long userId = userService.getCurrentlyLoggedUser().getUserId();
+        Long userId = getCurrentlyLoggedUserId();
 
         if(!task.getUser().getUserId().equals(userId)) {
-            throw new IllegalStateException(); // FIXME: ...
-        }
-
-        return task;
-    }
-
-    @Override
-    public Task getSingleTask(Long taskId, String taskCreatorName) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(); // FIXME: ...
-
-        if(!task.getCreatedBy().equals(taskCreatorName)) {
-            throw new IllegalStateException(); // FIXME ...
+            throw new TaskAccessException("You have no access to see this task");
         }
 
         return task;
@@ -58,14 +43,19 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task addTask(Task task) {
-        Long userId = userService.getCurrentlyLoggedUser().getUserId();
-        return addTask(task, userId);
+        User user = userService.getCurrentlyLoggedUser();
+        task.setUser(user);
+        return taskRepository.save(task);
     }
 
     @Override
-    public Task addTask(Task task, Long userId) {
-        User user = userService.getUserById(userId);
-        task.setUser(user);
-        return taskRepository.save(task);
+    public void toggleTask(Long taskId) {
+        Task task = getSingleTask(taskId);
+        task.setDone(!task.isDone());
+        taskRepository.save(task);
+    }
+
+    private Long getCurrentlyLoggedUserId() {
+        return userService.getCurrentlyLoggedUser().getUserId();
     }
 }

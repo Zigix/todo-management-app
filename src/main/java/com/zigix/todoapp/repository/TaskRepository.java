@@ -21,4 +21,8 @@ public interface TaskRepository {
 
     Task save(Task task);
 
+    void deleteById(Long taskId);
+
+    boolean existsByTaskIdAndCreatedBy(Long taskId, String taskCreatorName);
+
 }

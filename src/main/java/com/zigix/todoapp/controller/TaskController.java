@@ -1,9 +1,8 @@
 package com.zigix.todoapp.controller;
 
 import com.zigix.todoapp.model.Task;
-import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.service.TaskService;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
