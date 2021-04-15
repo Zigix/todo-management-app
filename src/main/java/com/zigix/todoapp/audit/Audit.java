@@ -10,6 +10,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @MappedSuperclass
@@ -20,15 +21,13 @@ public class Audit<U> {
     protected U createdBy;
 
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date createdDate;
+    protected LocalDateTime createdDate;
 
     @LastModifiedBy
     protected U lastModifiedBy;
 
     @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date lastModifiedDate;
+    protected LocalDateTime lastModifiedDate;
 
 
     public U getCreatedBy() {
@@ -39,11 +38,11 @@ public class Audit<U> {
         this.createdBy = createdBy;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -55,11 +54,11 @@ public class Audit<U> {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public Date getLastModifiedDate() {
+    public LocalDateTime getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Date lastModifiedDate) {
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 }

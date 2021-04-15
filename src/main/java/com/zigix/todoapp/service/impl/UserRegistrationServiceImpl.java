@@ -1,10 +1,12 @@
-package com.zigix.todoapp.service;
+package com.zigix.todoapp.service.impl;
 
 import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.model.UserRole;
+import com.zigix.todoapp.service.UserRegistrationService;
+import com.zigix.todoapp.service.UserService;
 import com.zigix.todoapp.service.projection.UserRegistrationRequest;
 import com.zigix.todoapp.service.registration.EmailSender;
-import com.zigix.todoapp.service.registration.PasswordGenerator;
+import com.zigix.todoapp.service.registration.PasswordGeneratorService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +23,16 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private final UserService userService;
     private final EmailSender emailSender;
-    private final PasswordGenerator passwordGenerator;
+    private final PasswordGeneratorService passwordGeneratorService;
     private final PasswordEncoder passwordEncoder;
 
     public UserRegistrationServiceImpl(UserService userService,
                                        EmailSender emailSender,
-                                       PasswordGenerator passwordGenerator,
+                                       PasswordGeneratorService passwordGeneratorService,
                                        PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.emailSender = emailSender;
-        this.passwordGenerator = passwordGenerator;
+        this.passwordGeneratorService = passwordGeneratorService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -42,7 +44,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         String emailAddress = registrationRequest.getEmail();
 
         String username = createValidUsername(firstName, lastName); // FIXME ...
-        String password = passwordGenerator.generate();
+        String password = passwordGeneratorService.generate();
 
         Map<String, String> exchangers = new HashMap<>(); // FIXME: ...
         exchangers.put("@$!name!$@", firstName + " " + lastName);

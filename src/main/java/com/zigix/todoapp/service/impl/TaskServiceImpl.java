@@ -1,10 +1,12 @@
-package com.zigix.todoapp.service;
+package com.zigix.todoapp.service.impl;
 
 import com.zigix.todoapp.exception.TaskAccessException;
 import com.zigix.todoapp.exception.TaskNotFoundException;
 import com.zigix.todoapp.model.Task;
 import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.repository.TaskRepository;
+import com.zigix.todoapp.service.TaskService;
+import com.zigix.todoapp.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,6 +47,7 @@ public class TaskServiceImpl implements TaskService {
     public Task addTask(Task task) {
         User user = userService.getCurrentlyLoggedUser();
         task.setUser(user);
+        task.setTaskId(0L);
         return taskRepository.save(task);
     }
 

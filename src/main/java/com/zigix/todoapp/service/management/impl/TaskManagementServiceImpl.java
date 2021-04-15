@@ -1,4 +1,4 @@
-package com.zigix.todoapp.service.management;
+package com.zigix.todoapp.service.management.impl;
 
 import com.zigix.todoapp.exception.TaskAccessException;
 import com.zigix.todoapp.exception.TaskNotFoundException;
@@ -6,6 +6,7 @@ import com.zigix.todoapp.model.Task;
 import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.repository.TaskRepository;
 import com.zigix.todoapp.service.UserService;
+import com.zigix.todoapp.service.management.TaskManagementService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,7 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     public Task addTaskToUser(Long userId, Task task) {
         User user = userService.getUserById(userId);
         task.setUser(user);
+        task.setTaskId(0L);
         return taskRepository.save(task);
     }
 

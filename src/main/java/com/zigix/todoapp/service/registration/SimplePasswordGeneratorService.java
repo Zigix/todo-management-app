@@ -4,7 +4,7 @@ import net.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SimplePasswordGenerator implements PasswordGenerator {
+public class SimplePasswordGeneratorService implements PasswordGeneratorService {
 
     @Override
     public String generate() {

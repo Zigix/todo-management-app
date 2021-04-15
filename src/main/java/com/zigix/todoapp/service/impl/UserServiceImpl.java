@@ -1,10 +1,11 @@
-package com.zigix.todoapp.service;
+package com.zigix.todoapp.service.impl;
 
 import com.zigix.todoapp.exception.UserNotFoundException;
 import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.model.UserRole;
 import com.zigix.todoapp.repository.UserRepository;
-import com.zigix.todoapp.service.registration.PasswordGenerator;
+import com.zigix.todoapp.service.UserService;
+import com.zigix.todoapp.service.registration.PasswordGeneratorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,14 +22,14 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final PasswordGenerator passwordGenerator;
+    private final PasswordGeneratorService passwordGeneratorService;
 
     public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
-                           PasswordGenerator passwordGenerator) {
+                           PasswordGeneratorService passwordGeneratorService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.passwordGenerator = passwordGenerator;
+        this.passwordGeneratorService = passwordGeneratorService;
     }
 
     @PostConstruct

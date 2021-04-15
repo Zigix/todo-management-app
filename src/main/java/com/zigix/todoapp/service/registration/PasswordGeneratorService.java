@@ -1,6 +1,6 @@
 package com.zigix.todoapp.service.registration;
 
-public interface PasswordGenerator {
+public interface PasswordGeneratorService {
 
     String generate();
 

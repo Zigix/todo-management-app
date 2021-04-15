@@ -1,4 +1,4 @@
-package com.zigix.todoapp.service;
+package com.zigix.todoapp.service.impl;
 
 import com.zigix.todoapp.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,9 +1,11 @@
-package com.zigix.todoapp.service;
+package com.zigix.todoapp.service.impl;
 
 import com.zigix.todoapp.model.Task;
 import com.zigix.todoapp.model.TaskGroup;
 import com.zigix.todoapp.model.User;
 import com.zigix.todoapp.repository.TaskGroupRepository;
+import com.zigix.todoapp.service.TaskGroupService;
+import com.zigix.todoapp.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
